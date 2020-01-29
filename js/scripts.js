@@ -101,20 +101,7 @@ class Game {
     this.playGame();
   }
   //Return true if winning
-  // playGame() {
-  //   let board = this.makeBoard();
-  //   // Display board to UI...
-  //   // User clicks a button... validate click or disable button after click
-  //   board.getSpace(COORDINATES).setMark(this.currentPlayer.getSymbol())
-  //   // Display mark on board UI
-  //   if(checkBoard) {
-  //     this.notifyWinner();
-  //     this.gameOver();
-  //   }
-  //   else {
-  //     this.switchPlayer(this.currentPlayer);
-  //   }
-  // }
+  // 
 
   checkBoard() {
     if (this.checkColumns() || this.checkRows() || this.checkDiagonals())  {
@@ -122,8 +109,49 @@ class Game {
     }
     return false;
   }
+}
+  function displayBoard(game) {
+    let boardContainer = $("#board");
+    let htmlForBoardContainer = "";
+    for(let row = 0; row < 3; row++) {
+      for(let col = 0; col < 3; col++) {
+        let space = game.board.getSpace(row, col);
+       htmlForBoardContainer += `<div class='space' id='${space.getCoordinates()}'>${space.getMark()}</div>`;
+      }
+    }
+    return boardContainer.html(htmlForBoardContainer);
+  }
+  function attachListeners(game){
+    $("#board").on("click", ".space", function() {
+      let id = this.id;
+      let coordinatesSplit = id.split(",");
+      let space = game.board.getSpace(coordinatesSplit[0], coordinatesSplit[1]);
+      space.setMark(game.currentPlayer.getSymbol());
+      displayBoard(game);
+    })
+  }
+
+  function playGame() {
+    let game = new Game();
+    let board = game.board;
+    displayBoard(game);
+    // User clicks a button... validate click or disable button after click
+    board.getSpace(COORDINATES).setMark(this.currentPlayer.getSymbol())
+    // Display mark on board UI
+    if(checkBoard) {
+      this.notifyWinner();
+      this.gameOver();
+    }
+    else {
+      this.switchPlayer(this.currentPlayer);
+    }
+  }
+
 $(document).ready(function(){
   let game = new Game();
+   //playGame();
+   displayBoard(game);
+   attachListeners(game);
   
   game.board.print();
 
