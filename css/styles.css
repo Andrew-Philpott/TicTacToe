@@ -1,4 +1,16 @@
-.disabledDiv {
-  pointer-events: none;
-  /* opacity: 0.4; */
+.space {
+  width: 100px;
+  height: 100px;
+  background-color: beige;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+#board {
+  display: flex;
+  flex-wrap: wrap;
+  width: 300px;
+}
+  

@@ -12,7 +12,7 @@ class Space {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.mark = 0;
+    this.mark = "";
   }
   setMark(playerMark) {
     if(!this.mark) {
@@ -80,15 +80,21 @@ class Game {
     for(let col = 0; col < 3; col++) {
       let rows = [];
       for(let row = 0; row < 3; row++) {
-        rows.push(this.board.getSpace(row,col).getMark());
-                //console.log(this.board.getSpace(row,col).getMark())
+        let spaceMark = this.board.getSpace(row,col).getMark();
+        if(spaceMark) {
+          rows.push(spaceMark);
+        }
       }
-      if(rows[0] == rows[1] == rows[2]) {
-        return true;
+      if (rows.length === 3) {
+        if((rows[0] === rows[1]) && (rows[1] === rows[2])) {
+          return true;
+        }
       }
-    }
     return false;
   }
+}
+
+
   //switch current player through game object
   switchPlayer(currentPlayer){
     if(currentPlayer == this.playerX) {
@@ -98,15 +104,15 @@ class Game {
     }
   }
 
-  gameOver() {
+  resetGame() {
+    this.board = this.makeBoard();
     this.currentPlayer = this.playerX;
-    this.playGame();
   }
   //Return true if winning
   // 
 
   checkBoard() {
-    if (this.checkColumns()){
+    if (this.checkColumns() || this.checkRows()) {
       // || this.checkRows() || this.checkDiagonal() || this.checkFull()
       return true;
     }
@@ -139,9 +145,15 @@ class Game {
         let gameDone = game.checkBoard();
         if(gameDone) {
           alert(game.notifyWinner());
+          game.resetGame();
+          displayBoard(game);
         }
         game.switchPlayer(game.currentPlayer);
       }
+    });
+    $("#new-game-button").on("click", function() {
+      game.resetGame();
+      displayBoard(game);
     });
   }
 
