@@ -1,6 +1,7 @@
 class Player {
   constructor(symbol) {
     this.symbol = symbol;
+    this.score = 0;
   }
 
   getSymbol() {
@@ -172,6 +173,7 @@ class Game {
 
   isWinner() {
     if (this.checkColumns() || this.checkRows() || this.checkDiagonal()) {
+      this.currentPlayer.score++;
       return true;
     }
     return false;
@@ -243,6 +245,7 @@ class Game {
     });
     $("#new-game-button").on("click", function() {
       game.resetGame();
+      $(".score").show();
       $("#board").show();
       $("#winner-text").remove();
       displayBoard(game);
@@ -250,8 +253,10 @@ class Game {
   }
 
   function notifyWinner(game) {
-    $("#board-container").append(`<p id="winner-text">${game.currentPlayer.getSymbol()} Wins!</p>`)
+    $("#board-container").append(`<p id="winner-text">${game.currentPlayer.getSymbol()} Wins!</p>`);
+    $(`#${game.currentPlayer.getSymbol()}`).text(game.currentPlayer.score);
     $("#board").hide();
+    $(".score").hide();
   }
 
   function notifyTie() {
