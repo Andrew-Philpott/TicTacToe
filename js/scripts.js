@@ -59,11 +59,14 @@ class Game {
   }
   
   checkColumns() {
+    let playerSymbol = this.currentPlayer.getSymbol();
     for(let row = 0; row < 3; row++) {
       let columns = [];
       for(let col = 0; col < 3; col++) {
-        let spaceMark = this.board.getSpace(row,col).getMark()
-        if (spaceMark) {
+        let spaceMark = this.board.getSpace(col,row).getMark();
+        if(playerSymbol !== spaceMark) {
+          break;
+        } else {
           columns.push(spaceMark);
         }
       }
@@ -75,23 +78,30 @@ class Game {
     }
     return false;
   }
-
+  
   checkRows() {
-    for(let col = 0; col < 3; col++) {
+    let playerSymbol = this.currentPlayer.getSymbol();
+    for(let row = 0; row < 3; row++) {
       let rows = [];
-      for(let row = 0; row < 3; row++) {
+      for(let col = 0; col < 3; col++) {
         let spaceMark = this.board.getSpace(row,col).getMark();
-        if(spaceMark) {
+        if(playerSymbol !== spaceMark) {
+          break;
+        } else {
           rows.push(spaceMark);
         }
-      }
-      if (rows.length === 3) {
-        if((rows[0] === rows[1]) && (rows[1] === rows[2])) {
-          return true;
+        if (rows.length === 3) {
+          if((rows[0] === rows[1]) && (rows[1] === rows[2])) {
+            return true;
+          }
         }
-      }
-    return false;
+      } 
   }
+  return false;
+}
+
+checkDiagonal() {
+
 }
 
 
@@ -113,7 +123,6 @@ class Game {
 
   checkBoard() {
     if (this.checkColumns() || this.checkRows()) {
-      // || this.checkRows() || this.checkDiagonal() || this.checkFull()
       return true;
     }
     return false;
@@ -139,16 +148,19 @@ class Game {
       let id = this.id;
       let coordinatesSplit = id.split(",");
       let space = game.board.getSpace(coordinatesSplit[0], coordinatesSplit[1]);
-      let canMarkSpace = space.setMark(game.currentPlayer.getSymbol());
-      if(canMarkSpace) {
-        displayBoard(game);
-        let gameDone = game.checkBoard();
-        if(gameDone) {
-          alert(game.notifyWinner());
-          game.resetGame();
+      if(!game.checkBoard()){
+        let canMarkSpace = space.setMark(game.currentPlayer.getSymbol());
+        if(canMarkSpace) {
           displayBoard(game);
+          let gameDone = game.checkBoard();
+          if(gameDone) {
+            alert(game.notifyWinner());
+            displayBoard(game);
+            // game = null;
+          } else {
+            game.switchPlayer(game.currentPlayer);
+          }
         }
-        game.switchPlayer(game.currentPlayer);
       }
     });
     $("#new-game-button").on("click", function() {
@@ -157,32 +169,9 @@ class Game {
     });
   }
 
-  function playGame() {
-    let game = new Game();
-    let board = game.board;
-    displayBoard(game);
-    // User clicks a button... validate click or disable button after click
-    board.getSpace(COORDINATES).setMark(this.currentPlayer.getSymbol())
-    // Display mark on board UI
-    if(checkBoard) {
-      this.notifyWinner();
-      this.gameOver();
-    }
-    else {
-      this.switchPlayer(this.currentPlayer);
-    }
-  }
-
 $(document).ready(function(){
   let game = new Game();
    displayBoard(game);
    attachListeners(game);
 
-  //make board
-  //disable space button
-
-  //Any 9 space buttons on click
-  //code is run to update space, checkBoard is called
-  //check to win game, if winner, start net game
-  //if no winner, switch player
-})
+});
