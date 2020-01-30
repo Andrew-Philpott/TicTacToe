@@ -96,39 +96,95 @@ class Game {
           }
         }
       } 
+    }
+    return false;
   }
-  return false;
-}
 
-checkDiagonal() {
-  let playerSymbol = this.currentPlayer.getSymbol();
+  checkDiagonal() {
+    let playerSymbol = this.currentPlayer.getSymbol();
 
-  let bleftToRight = [this.board.getSpace(0,0).getMark(), this.board.getSpace(1,1).getMark(), this.board.getSpace(2,2).getMark()];
+    let bleftToRight = [this.board.getSpace(0,0).getMark(), this.board.getSpace(1,1).getMark(), this.board.getSpace(2,2).getMark()];
 
-  let tLefttoRight = [this.board.getSpace(2,0).getMark(), this.board.getSpace(1,1).getMark(), this.board.getSpace(0,2).getMark()];
+    let tLefttoRight = [this.board.getSpace(2,0).getMark(), this.board.getSpace(1,1).getMark(), this.board.getSpace(0,2).getMark()];
 
-  let matchedPlayerValuesbleftToRight  = [];
-  bleftToRight.forEach(function(value) {
-    if(value === playerSymbol) {
-      matchedPlayerValuesbleftToRight.push(value);
+    let matchedPlayerValuesbleftToRight  = [];
+    bleftToRight.forEach(function(value) {
+      if(value === playerSymbol) {
+        matchedPlayerValuesbleftToRight.push(value);
+      }
+    });
+    if(matchedPlayerValuesbleftToRight.length === 3)
+      {
+        return true;
+      }
+    let matchedPlayerValuesTleftToRight = [];
+    tLefttoRight.forEach(function(value) {
+      if(value === playerSymbol) {
+        matchedPlayerValuesTleftToRight.push(value);
+      }
+    });
+    if(matchedPlayerValuesTleftToRight.length === 3)
+      {
+        return true;
+      }
+    return false;
     }
-  });
-  if(matchedPlayerValuesbleftToRight.length === 3)
-    {
-      return true;
+
+
+  ////////// MY ADDITION ////////////
+  checkBoard2() {
+    let potentialWins = [];
+    // Add all rows to potentialWins
+    let rows = [];
+    for(let row = 0; row < 3; row++) {
+      let row = [];
+      for(let col = 0; col < 3; col++) {
+        // THIS LINE DOESN'T WORK BECAUSE THIS.BOARD IS A METHOD NOT THE STATE OF THE BOARD
+        let spaceMark = this.board.getSpace(row,col).getMark();
+        row.push(spaceMark);
+      }
+      rows.push(row);
     }
-  let matchedPlayerValuesTleftToRight = [];
-  tLefttoRight.forEach(function(value) {
-    if(value === playerSymbol) {
-      matchedPlayerValuesTleftToRight.push(value);
+    potentialWins.push(board);
+    console.log("push board layout " + potentialWins);
+    // Add all columns to potentialWins
+    let columns = [];
+    for(let row = 0; row < 3; row++) {
+      let column = [];
+      for(let col = 0; col < 3; col++) {
+        // THIS LINE DOESN'T WORK BECAUSE THIS.BOARD IS A METHOD NOT THE STATE OF THE BOARD
+        let spaceMark = this.board.getSpace(col,row).getMark();
+        column.push(spaceMark);
+      }
+      columns.push(column);
     }
-  });
-  if(matchedPlayerValuesTleftToRight.length === 3)
-    {
-      return true;
+    potentialWins.push(columns);
+    console.log("push columns " + potentialWins);
+    // Add diagonals to potentialWins
+    let diagonal1 = [];
+    for (let idx = 0; idx < 3; idx++){
+      // THIS LINE DOESN'T WORK BECAUSE THIS.BOARD IS A METHOD NOT THE STATE OF THE BOARD
+      let spaceMark = board[idx][idx].getSpace().getMark();
+      diagonal1.push(spaceMark);
     }
-  return false;
+    console.log("diagonal1 " + diagonal1);
+    let diagonal2 = [];
+    for (let idx = 0; idx < 3; idx++){
+      // THIS LINE DOESN'T WORK BECAUSE THIS.BOARD IS A METHOD NOT THE STATE OF THE BOARD
+      let spaceMark = board[idx][2-idx].getSpace().getMark();
+      diagonal2.push(spaceMark);
+    }
+    console.log("diagonal2 " + diagonal2);
+    // Check potentialWins and return true or false
+    for (potential of potentialWins){
+      let set = new Set(potential);
+      if ((set[0]) && (set.length === 1)){
+        return true;
+      } 
+    }
+    return false;
   }
+  ////////// MY ADDITION ////////////
 
   switchPlayer(currentPlayer){
     if(currentPlayer == this.playerX) {
