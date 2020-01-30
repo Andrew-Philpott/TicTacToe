@@ -101,11 +101,35 @@ class Game {
 }
 
 checkDiagonal() {
+  let playerSymbol = this.currentPlayer.getSymbol();
 
-}
+  let bleftToRight = [this.board.getSpace(0,0).getMark(), this.board.getSpace(1,1).getMark(), this.board.getSpace(2,2).getMark()];
 
+  let tLefttoRight = [this.board.getSpace(2,0).getMark(), this.board.getSpace(1,1).getMark(), this.board.getSpace(0,2).getMark()];
 
-  //switch current player through game object
+  let matchedPlayerValuesbleftToRight  = [];
+  bleftToRight.forEach(function(value) {
+    if(value === playerSymbol) {
+      matchedPlayerValuesbleftToRight.push(value);
+    }
+  });
+  if(matchedPlayerValuesbleftToRight.length === 3)
+    {
+      return true;
+    }
+  let matchedPlayerValuesTleftToRight = [];
+  tLefttoRight.forEach(function(value) {
+    if(value === playerSymbol) {
+      matchedPlayerValuesTleftToRight.push(value);
+    }
+  });
+  if(matchedPlayerValuesTleftToRight.length === 3)
+    {
+      return true;
+    }
+  return false;
+  }
+
   switchPlayer(currentPlayer){
     if(currentPlayer == this.playerX) {
       this.currentPlayer = this.playerO;
@@ -122,7 +146,7 @@ checkDiagonal() {
   // 
 
   checkBoard() {
-    if (this.checkColumns() || this.checkRows()) {
+    if (this.checkColumns() || this.checkRows() || this.checkDiagonal()) {
       return true;
     }
     return false;
