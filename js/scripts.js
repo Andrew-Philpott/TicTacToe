@@ -44,6 +44,7 @@ class Game {
     this.playerX = new Player("X");
     this.playerO = new Player("O");
     this.currentPlayer = this.playerX;
+    this.turnCount = 1;
     this.board = this.makeBoard();
   }
 
@@ -132,41 +133,9 @@ class Game {
 
 
   ////////// MY ADDITION ////////////
-  checkBoard2() {
+  isWinner2() {
     let potentialWins = [];
-    // Add all rows to potentialWins
-    let rows = [];
-    for(let row = 0; row < 3; row++) {
-      let row = [];
-      for(let col = 0; col < 3; col++) {
-        // THIS LINE DOESN'T WORK BECAUSE THIS.BOARD IS A METHOD NOT THE STATE OF THE BOARD
-        let spaceMark = this.board.getSpace(row,col).getMark();
-        row.push(spaceMark);
-      }
-      rows.push(row);
-    }
-    potentialWins.push(board);
-    console.log("push board layout " + potentialWins);
-    // Add all columns to potentialWins
-    let columns = [];
-    for(let row = 0; row < 3; row++) {
-      let column = [];
-      for(let col = 0; col < 3; col++) {
-        // THIS LINE DOESN'T WORK BECAUSE THIS.BOARD IS A METHOD NOT THE STATE OF THE BOARD
-        let spaceMark = this.board.getSpace(col,row).getMark();
-        column.push(spaceMark);
-      }
-      columns.push(column);
-    }
-    potentialWins.push(columns);
-    console.log("push columns " + potentialWins);
-    // Add diagonals to potentialWins
-    let diagonal1 = [];
-    for (let idx = 0; idx < 3; idx++){
-      // THIS LINE DOESN'T WORK BECAUSE THIS.BOARD IS A METHOD NOT THE STATE OF THE BOARD
-      let spaceMark = board[idx][idx].getSpace().getMark();
-      diagonal1.push(spaceMark);
-    }
+
     console.log("diagonal1 " + diagonal1);
     let diagonal2 = [];
     for (let idx = 0; idx < 3; idx++){
@@ -187,6 +156,7 @@ class Game {
   ////////// MY ADDITION ////////////
 
   switchPlayer(currentPlayer){
+    this.turnCount += 1;
     if(currentPlayer == this.playerX) {
       this.currentPlayer = this.playerO;
     } else {
@@ -195,48 +165,76 @@ class Game {
   }
 
   resetGame() {
+    this.turnCount = 1;
     this.board = this.makeBoard();
     this.currentPlayer = this.playerX;
   }
-  //Return true if winning
-  // 
 
-  checkBoard() {
+  isWinner() {
     if (this.checkColumns() || this.checkRows() || this.checkDiagonal()) {
       return true;
     }
     return false;
-  }
-  notifyWinner() {
-    return this.currentPlayer.getSymbol() + " wins!!!";
   }
 }
 
   function displayBoard(game) {
     let boardContainer = $("#board");
     let htmlForBoardContainer = "";
+    let boardGameLength = game.board.board.length-1;
     for(let row = 0; row < 3; row++) {
       for(let col = 0; col < 3; col++) {
         let space = game.board.getSpace(row, col);
-       htmlForBoardContainer += `<div class='space' id='${space.getCoordinates()}'>${space.getMark()}</div>`;
+        let coords = space.getCoordinates();
+        let position = "";
+        if(coords[0] === 0){
+          if(coords[1] === 0) {
+            position = "top-left";
+          } else if(coords[1] === boardGameLength)
+          {
+            position = "top-right";
+          } else {
+            position = "top-middle";
+          }
+        } else if(coords[1] === 0) {
+          if(coords[0] === boardGameLength){
+            position = "bottom-left";
+          } else {
+            position = "left-middle";
+          }
+
+        } else if(coords[0] === boardGameLength) {
+          if(coords[1] === boardGameLength)
+          {
+            position = "bottom-right";
+          } else {
+            position = "bottom-middle";
+          }
+        }
+        else if(coords[1] === boardGameLength)
+        {
+          position = "right-middle";
+        }
+        htmlForBoardContainer +=`<div class='space ${position}' id='${space.getCoordinates()}'>${space.getMark()}</div>`  
       }
     }
     return boardContainer.html(htmlForBoardContainer);
   }
+
   function attachListeners(game){
     $("#board").on("click", ".space", function() {
       let id = this.id;
       let coordinatesSplit = id.split(",");
       let space = game.board.getSpace(coordinatesSplit[0], coordinatesSplit[1]);
-      if(!game.checkBoard()){
-        let canMarkSpace = space.setMark(game.currentPlayer.getSymbol());
-        if(canMarkSpace) {
+      if(!game.isWinner()){
+        let didMarkSpace = space.setMark(game.currentPlayer.getSymbol());
+        if(didMarkSpace) {
           displayBoard(game);
-          let gameDone = game.checkBoard();
-          if(gameDone) {
-            alert(game.notifyWinner());
+          if(game.isWinner()) {
+            notifyWinner(game);
             displayBoard(game);
-            // game = null;
+          } else if (!game.isWinner() && (game.turnCount === 9)){
+            notifyTie();
           } else {
             game.switchPlayer(game.currentPlayer);
           }
@@ -245,8 +243,20 @@ class Game {
     });
     $("#new-game-button").on("click", function() {
       game.resetGame();
+      $("#board").show();
+      $("#winner-text").remove();
       displayBoard(game);
     });
+  }
+
+  function notifyWinner(game) {
+    $("#board-container").append(`<p id="winner-text">${game.currentPlayer.getSymbol()} Wins!</p>`)
+    $("#board").hide();
+  }
+
+  function notifyTie() {
+    $("#board-container").append(`<p id="winner-text">Tie</p>`)
+    $("#board").hide();
   }
 
 $(document).ready(function(){

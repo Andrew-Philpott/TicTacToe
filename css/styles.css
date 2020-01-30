@@ -1,16 +1,99 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+#game {
+  margin-top: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 80%;
+  width: 80%;
+  max-width: 700px;
+}
+
 .space {
-  width: 100px;
-  height: 100px;
-  background-color: beige;
-  border: 1px solid black;
+  width: calc(100%/3);
+  height: calc(100%/3);
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 3em;
 }
+
+.left-middle {
+  border-right: 3px solid black;
+}
+
+.top-middle {
+  border-bottom: 3px solid black;
+}
+
+.top-right{
+  border-bottom: 3px solid black;
+  border-left: 3px solid black;
+}
+
+.right-middle {
+  border-left: 3px solid black;
+}
+
+.bottom-right {
+  border-top: 3px solid black;
+  border-left: 3px solid black;
+}
+
+.bottom-middle {
+  border-top: 3px solid black;
+}
+
+.bottom-left {
+  border-top: 3px solid black;
+  border-right: 3px solid black;
+}
+
+.top-left {
+  border-bottom: 3px solid black;
+  border-right: 3px solid black;
+}
+
+
+
+
 
 #board {
   display: flex;
   flex-wrap: wrap;
-  width: 300px;
+  width: 100%;
+  height: 500px;
+}
+#board-container {
+  height: 800px;
+  width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+}
+#new-game-button {
+  border-radius: 5px;
+  color: white;
+  background-color: #47A14A;
+  padding: 20px 40px;
+}
+
+#winner-text {
+  animation: grow 0.5s linear 1 forwards;
+  font-size: 2em;
+}
+
+
+@keyframes grow {
+  100% {
+    transform: scale(5);
+  }
 }
   
